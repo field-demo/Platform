@@ -1,0 +1,12 @@
+{
+  "name": "AMOS Field Interface",
+  "short_name": "AMOS Field",
+  "description": "PWA prototype for field inspection execution and management status overview.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07131f",
+  "theme_color": "#07131f",
+  "orientation": "portrait",
+  "icons": []
+}
