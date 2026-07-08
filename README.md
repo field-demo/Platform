@@ -1,11 +1,3 @@
-# Field Demo Clean v1.2
+# Field Demo AMOS-focused v1.3
 
-Simplified presentation demo for Scarabeo 8.
-
-Focus:
-- My Shift
-- Sling Store
-- Findings
-- Dashboard
-- Fewer menus
-- Cleaner before shift change
+Added role selection, AMOS work orders, PTW overview, Toolbox talk, notifications, QR scan demo, report/AMOS queue demo and Stability/Management dashboard.

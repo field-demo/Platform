@@ -1,46 +1,70 @@
 {
   "vessel": "Scarabeo 8",
-  "role": "Deck Operator",
-  "shift": [
+  "roles": [
     {
-      "id": "shift-daily",
-      "title": "Daily Deck Round",
-      "module": "Daily Rounds",
-      "status": "Approved",
-      "progress": 100,
-      "remaining": 0
+      "id": "ab",
+      "title": "AB / Deck Operator",
+      "subtitle": "Field execution and rounds",
+      "icon": "\ud83e\uddba"
     },
     {
-      "id": "shift-fire",
+      "id": "stability",
+      "title": "Stability Leader",
+      "subtitle": "Status, overdue and priorities",
+      "icon": "\ud83d\udee2"
+    },
+    {
+      "id": "management",
+      "title": "Management",
+      "subtitle": "KPI and overview",
+      "icon": "\ud83d\udcca"
+    }
+  ],
+  "workOrders": [
+    {
+      "id": "WO-104821",
       "title": "Fire & Safety Round",
       "module": "Fire & Safety",
       "status": "Follow-up",
+      "priority": "Medium",
       "progress": 70,
-      "remaining": 3
+      "eta": "45 min"
     },
     {
-      "id": "shift-lsa",
+      "id": "WO-104822",
       "title": "LSA / Lifeboats",
       "module": "Life Saving Appliances",
       "status": "Not Started",
+      "priority": "Normal",
       "progress": 35,
-      "remaining": 4
+      "eta": "35 min"
     },
     {
-      "id": "shift-sling",
+      "id": "WO-104823",
       "title": "Sling Store Follow-up",
       "module": "Sling Store",
       "status": "Defect",
+      "priority": "High",
       "progress": 55,
-      "remaining": 5
+      "eta": "30 min"
     },
     {
-      "id": "shift-mp",
+      "id": "WO-104824",
       "title": "Maintenance Area Status",
       "module": "Maintenance Program",
       "status": "Follow-up",
+      "priority": "Medium",
       "progress": 80,
-      "remaining": 2
+      "eta": "25 min"
+    },
+    {
+      "id": "WO-104820",
+      "title": "Daily Deck Round",
+      "module": "Daily Rounds",
+      "status": "Approved",
+      "priority": "Normal",
+      "progress": 100,
+      "eta": "Complete"
     }
   ],
   "items": [
@@ -49,11 +73,12 @@
       "module": "Daily Rounds",
       "type": "Area Inspection",
       "tag": "AREA-WH-34",
+      "wo": "WO-104820",
       "title": "Winch House 3/4",
       "location": "M-Deck",
       "status": "Approved",
+      "priority": "Normal",
       "detail": "DROP and housekeeping inspection completed. No loose equipment observed.",
-      "severity": "",
       "frequency": "Daily",
       "checks": [
         "Couplings and hoses checked",
@@ -67,11 +92,12 @@
       "module": "Daily Rounds",
       "type": "Area Inspection",
       "tag": "AREA-LB-AFT",
+      "wo": "WO-104820",
       "title": "Aft Lifeboat Station",
       "location": "Tween Deck",
       "status": "Defect",
+      "priority": "Medium",
       "detail": "Yellow escape marking partly slippery. Needs cleaning / anti-slip follow-up.",
-      "severity": "Medium",
       "frequency": "Daily",
       "checks": [
         "Access checked",
@@ -85,11 +111,12 @@
       "module": "Fire & Safety",
       "type": "Fire Hydrant",
       "tag": "FH-UDK-032",
+      "wo": "WO-104821",
       "title": "Fire Hydrant",
       "location": "US 32 / Outside HVAC-Compressor-BOP Room",
       "status": "Follow-up",
+      "priority": "Medium",
       "detail": "Cabinet door hard to open. Needs adjustment.",
-      "severity": "Low",
       "frequency": "1W",
       "checks": [
         "Hose present",
@@ -103,11 +130,12 @@
       "module": "Fire & Safety",
       "type": "Water Extinguisher",
       "tag": "W-BDK-003",
+      "wo": "WO-104821",
       "title": "W3 Water Extinguisher",
       "location": "B Deck Collaboration Room 2",
       "status": "Defect",
+      "priority": "High",
       "detail": "Pressure gauge below green area. Replace or service extinguisher.",
-      "severity": "High",
       "frequency": "1M",
       "checks": [
         "Pressure gauge checked",
@@ -121,11 +149,12 @@
       "module": "Life Saving Appliances",
       "type": "Lifeboat",
       "tag": "LB-001",
+      "wo": "WO-104822",
       "title": "Lifeboat 1",
       "location": "Fwd Lifeboat Station Port",
       "status": "Approved",
+      "priority": "Normal",
       "detail": "Visual check OK.",
-      "severity": "",
       "frequency": "1W",
       "cert": "Valid until 2027-03-15",
       "checks": [
@@ -140,11 +169,12 @@
       "module": "Life Saving Appliances",
       "type": "MOB Boat",
       "tag": "MOB-PORT",
+      "wo": "WO-104822",
       "title": "MOB Boat Port",
       "location": "Port MOB Boat Station",
       "status": "Follow-up",
+      "priority": "Medium",
       "detail": "One securing strap shows wear. Monitor / replace if deterioration continues.",
-      "severity": "Low",
       "frequency": "1W",
       "cert": "Valid until 2027-02-11",
       "checks": [
@@ -159,11 +189,12 @@
       "module": "Maintenance Program",
       "type": "Area Status",
       "tag": "MP-MDECK",
+      "wo": "WO-104824",
       "title": "Area Status - M-Deck",
       "location": "Main Deck General Area",
       "status": "Follow-up",
+      "priority": "Low",
       "detail": "Minor housekeeping observations. No immediate safety critical issue.",
-      "severity": "Low",
       "frequency": "Weekly",
       "checks": [
         "Walkways clear",
@@ -173,35 +204,16 @@
       ]
     },
     {
-      "id": "sling-rs-00213",
-      "module": "Sling Store",
-      "type": "Round Sling",
-      "tag": "RS-00213",
-      "title": "2T Round Sling",
-      "location": "Rack B2",
-      "status": "Approved",
-      "detail": "Returned to rack. Visual condition OK.",
-      "severity": "",
-      "frequency": "On Use",
-      "loan": "In Store",
-      "cert": "Valid until 2027-04-12",
-      "checks": [
-        "Tag readable",
-        "No visible damage",
-        "Certificate valid",
-        "Stored correctly"
-      ]
-    },
-    {
       "id": "sling-sca-01001",
       "module": "Sling Store",
       "type": "Lever Hoist",
       "tag": "SCA-01001",
+      "wo": "WO-104823",
       "title": "Lever Hoist",
       "location": "Mud Pump Room",
       "status": "Approved",
+      "priority": "Normal",
       "detail": "Loan registered. Due back within 14 days.",
-      "severity": "",
       "frequency": "On Use",
       "loan": "Out",
       "loanType": "Short Term",
@@ -221,11 +233,12 @@
       "module": "Sling Store",
       "type": "Chain Hoist",
       "tag": "SCA-01002",
+      "wo": "WO-104823",
       "title": "Chain Hoist",
       "location": "BOP Gantry Crane",
       "status": "Defect",
+      "priority": "High",
       "detail": "Overdue short term loan. Must be retrieved from field.",
-      "severity": "Medium",
       "frequency": "On Use",
       "loan": "Overdue",
       "loanType": "Short Term",
@@ -244,11 +257,12 @@
       "module": "Sling Store",
       "type": "Wire Sling",
       "tag": "WS-0144",
+      "wo": "WO-104823",
       "title": "Wire Sling",
       "location": "Quarantine Shelf",
       "status": "Defect",
+      "priority": "High",
       "detail": "Broken wire strands observed. Moved to quarantine shelf.",
-      "severity": "High",
       "frequency": "On Use",
       "loan": "Quarantine",
       "cert": "Quarantined",
@@ -263,11 +277,12 @@
       "module": "Sling Store",
       "type": "Lifting Beam",
       "tag": "LBM-003",
+      "wo": "WO-104823",
       "title": "Lifting Beam",
       "location": "Beam Rack",
       "status": "Follow-up",
+      "priority": "Medium",
       "detail": "Certificate expires within 30 days. Plan recertification.",
-      "severity": "Medium",
       "frequency": "Monthly",
       "loan": "In Store",
       "cert": "Expiring soon: 2026-08-01",
@@ -277,6 +292,57 @@
         "Stored correctly",
         "Recertification planned"
       ]
+    }
+  ],
+  "ptw": [
+    {
+      "id": "PTW-8821",
+      "type": "Lifting Operation",
+      "area": "Pipe Deck",
+      "status": "Open",
+      "risk": "Medium"
+    },
+    {
+      "id": "PTW-8822",
+      "type": "Working Aloft",
+      "area": "Derrick Leg Stbd",
+      "status": "Planned",
+      "risk": "High"
+    },
+    {
+      "id": "PTW-8823",
+      "type": "Hot Work",
+      "area": "Workshop",
+      "status": "Closed",
+      "risk": "Medium"
+    }
+  ],
+  "toolbox": [
+    {
+      "topic": "Weather / wind exposure on deck",
+      "status": "Completed"
+    },
+    {
+      "topic": "Dropped object awareness",
+      "status": "Completed"
+    },
+    {
+      "topic": "Sling Store return discipline",
+      "status": "Pending"
+    }
+  ],
+  "notifications": [
+    {
+      "type": "AMOS",
+      "text": "WO-104823 has high priority overdue equipment."
+    },
+    {
+      "type": "Certificate",
+      "text": "LBM-003 expires within 30 days."
+    },
+    {
+      "type": "Finding",
+      "text": "W3 extinguisher requires service or replacement."
     }
   ]
 }

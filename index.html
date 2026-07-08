@@ -1,118 +1,12 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07131f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="styles.css">
-<title>Field Demo</title>
-</head>
-<body>
-<div class="app">
-<header class="top">
-  <div>
-    <p class="eyebrow">Field Demo v1.2</p>
-    <h1>Scarabeo 8</h1>
-    <p class="muted">Deck Operator • Field Execution</p>
-  </div>
-  <button id="syncBtn">↻</button>
-</header>
-
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07131f"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"><title>Field Demo</title></head><body>
+<div class="app"><header class="top"><div><p class="eyebrow">AMOS Field Layer v1.3</p><h1>Scarabeo 8</h1><p class="muted" id="roleLabel">Select role to start</p></div><button id="syncBtn">↻</button></header>
 <main>
-<section id="home" class="view active">
-  <div class="hero">
-    <div>
-      <p class="eyebrow">Today's Shift</p>
-      <h2 id="homeTitle">Loading…</h2>
-      <p id="homeText" class="muted"></p>
-    </div>
-    <div class="ring" id="ring"><span id="ringText">0%</span></div>
-  </div>
-
-  <button class="continue" data-go="shift">Continue Working →</button>
-
-  <div class="quick">
-    <button data-go="shift"><span>☑</span><b>My Shift</b><small>Today's work</small></button>
-    <button data-go="sling"><span>⚓</span><b>Sling Store</b><small>Loans & certs</small></button>
-    <button data-go="findings"><span>⚠</span><b>Findings</b><small id="findingsCount">0 open</small></button>
-    <button data-go="dashboard"><span>📊</span><b>Dashboard</b><small>Overview</small></button>
-  </div>
-
-  <section class="panel">
-    <div class="panelTitle"><h3>Modules</h3><small>Simple demo view</small></div>
-    <div id="moduleList"></div>
-  </section>
-</section>
-
-<section id="shift" class="view">
-  <div class="head"><div><p class="eyebrow">Crew Mode</p><h2>My Shift</h2></div><button class="ghost" id="resetBtn">Reset</button></div>
-  <input id="search" class="search" placeholder="Search tag, location, module, equipment…">
-  <div id="shiftList" class="cards"></div>
-</section>
-
-<section id="sling" class="view">
-  <div class="head"><div><p class="eyebrow">Sling Store</p><h2>Loan Register</h2></div><button class="ghost" id="takeOutBtn">Take Out</button></div>
-  <div class="kpis">
-    <div><small>Out</small><b id="outCount">0</b></div>
-    <div><small>Overdue</small><b id="overdueCount">0</b></div>
-    <div><small>Quarantine</small><b id="quarantineCount">0</b></div>
-    <div><small>Cert due</small><b id="certCount">0</b></div>
-  </div>
-  <div class="tabs">
-    <button class="tab active" data-sling="All">All</button>
-    <button class="tab" data-sling="Out">Out</button>
-    <button class="tab" data-sling="Overdue">Overdue</button>
-    <button class="tab" data-sling="Quarantine">Quarantine</button>
-  </div>
-  <div id="slingList" class="cards"></div>
-</section>
-
-<section id="findings" class="view">
-  <div class="head"><div><p class="eyebrow">Open items</p><h2>Findings</h2></div></div>
-  <div id="findingsList" class="cards"></div>
-</section>
-
-<section id="dashboard" class="view">
-  <div class="head"><div><p class="eyebrow">Supervisor Mode</p><h2>Dashboard</h2></div><span class="badge">Offline-ready</span></div>
-  <div class="kpis">
-    <div><small>Completion</small><b id="dashPct">0%</b></div>
-    <div><small>Remaining</small><b id="dashRemaining">0</b></div>
-    <div><small>Defects</small><b id="dashDefects">0</b></div>
-    <div><small>Follow-up</small><b id="dashFollow">0</b></div>
-  </div>
-  <section class="panel"><div class="panelTitle"><h3>Module Progress</h3><small>Live demo status</small></div><div id="progressList"></div></section>
-  <section class="panel"><div class="panelTitle"><h3>Sling Store</h3><small>Loans and certification</small></div><div id="loanStats"></div></section>
-</section>
-</main>
-
-<nav class="nav">
-  <button class="navBtn active" data-go="home">⌂<span>Home</span></button>
-  <button class="navBtn" data-go="shift">☑<span>Shift</span></button>
-  <button class="navBtn" data-go="sling">⚓<span>Sling</span></button>
-  <button class="navBtn" data-go="findings">⚠<span>Find</span></button>
-  <button class="navBtn" data-go="dashboard">📊<span>Dash</span></button>
-</nav>
-</div>
-
-<dialog id="dialog">
-<form method="dialog" class="dialogCard">
-<button class="close" value="cancel">×</button>
-<p id="dlgMeta" class="eyebrow"></p>
-<h2 id="dlgTitle"></h2>
-<p id="dlgLocation" class="muted"></p>
-<div class="chips"><span id="dlgTag"></span><span id="dlgStatus"></span><span id="dlgCert"></span></div>
-<div id="loanBox" class="loanBox"></div>
-<div class="inspectBox"><b id="dlgTask"></b><ul id="dlgChecks"></ul></div>
-<label>Status</label>
-<select id="statusSelect"><option>Approved</option><option>Follow-up</option><option>Defect</option><option>Not Started</option><option>N/A</option></select>
-<label>Comment</label>
-<textarea id="comment"></textarea>
-<button id="saveBtn" class="primary" value="default">Save</button>
-</form>
-</dialog>
-
-<script src="app.js"></script>
-</body>
-</html>
+<section id="role" class="view active"><div class="hero"><div><p class="eyebrow">Mobile field execution layer</p><h2>Connect field work to AMOS</h2><p class="muted">Choose role for demo view.</p></div></div><div id="roleGrid" class="quick"></div></section>
+<section id="home" class="view"><div class="hero"><div><p class="eyebrow">Today's Shift</p><h2 id="homeTitle">Loading…</h2><p id="homeText" class="muted"></p></div><div class="ring" id="ring"><span id="ringText">0%</span></div></div><button class="continue" data-go="shift">Continue Working →</button><div class="quick"><button data-go="shift"><span>☑</span><b>My Shift</b><small>Assigned AMOS jobs</small></button><button data-go="amos"><span>🔧</span><b>AMOS Jobs</b><small>Work orders / PTW</small></button><button data-go="sling"><span>⚓</span><b>Sling Store</b><small>Loans & certs</small></button><button data-go="dashboard"><span>📊</span><b>Dashboard</b><small>Supervisor overview</small></button></div><section class="panel"><div class="panelTitle"><h3>Notifications</h3><small>Demo alerts</small></div><div id="notifList"></div></section></section>
+<section id="shift" class="view"><div class="head"><div><p class="eyebrow">Crew Mode</p><h2>My Shift</h2></div><button class="ghost" id="resetBtn">Reset</button></div><input id="search" class="search" placeholder="Search tag, AMOS WO, location, module…"><div id="shiftList" class="cards"></div></section>
+<section id="amos" class="view"><div class="head"><div><p class="eyebrow">AMOS Simulation</p><h2>Work Orders</h2></div><button class="ghost" id="scanBtn">Scan QR</button></div><div id="woList" class="cards"></div><section class="panel"><div class="panelTitle"><h3>PTW Overview</h3><small>Demo only</small></div><div id="ptwList"></div></section><section class="panel"><div class="panelTitle"><h3>Toolbox Talk</h3><small>Today</small></div><div id="toolboxList"></div></section></section>
+<section id="sling" class="view"><div class="head"><div><p class="eyebrow">Sling Store</p><h2>Loan Register</h2></div><button class="ghost" id="takeOutBtn">Take Out</button></div><div class="kpis"><div><small>Out</small><b id="outCount">0</b></div><div><small>Overdue</small><b id="overdueCount">0</b></div><div><small>Quarantine</small><b id="quarantineCount">0</b></div><div><small>Cert due</small><b id="certCount">0</b></div></div><div id="slingList" class="cards"></div></section>
+<section id="findings" class="view"><div class="head"><div><p class="eyebrow">Open items</p><h2>Findings</h2></div><button class="ghost" id="reportBtn">Report</button></div><div id="findingsList" class="cards"></div></section>
+<section id="dashboard" class="view"><div class="head"><div><p class="eyebrow">Stability / Management</p><h2>Dashboard</h2></div><span class="badge">Offline-ready</span></div><div class="kpis"><div><small>Completion</small><b id="dashPct">0%</b></div><div><small>Critical</small><b id="dashCritical">0</b></div><div><small>Overdue</small><b id="dashOverdue">0</b></div><div><small>Pending Sync</small><b>12</b></div></div><section class="panel"><div class="panelTitle"><h3>Module Progress</h3><small>Live demo status</small></div><div id="progressList"></div></section><section class="panel"><div class="panelTitle"><h3>AMOS / Operations</h3><small>Simulated feed</small></div><div id="opsStats"></div></section></section>
+</main><nav class="nav"><button class="navBtn active" data-go="home">⌂<span>Home</span></button><button class="navBtn" data-go="shift">☑<span>Shift</span></button><button class="navBtn" data-go="amos">🔧<span>AMOS</span></button><button class="navBtn" data-go="sling">⚓<span>Sling</span></button><button class="navBtn" data-go="dashboard">📊<span>Dash</span></button></nav></div>
+<dialog id="dialog"><form method="dialog" class="dialogCard"><button class="close" value="cancel">×</button><p id="dlgMeta" class="eyebrow"></p><h2 id="dlgTitle"></h2><p id="dlgLocation" class="muted"></p><div class="chips"><span id="dlgTag"></span><span id="dlgWo"></span><span id="dlgCert"></span></div><div id="loanBox" class="loanBox"></div><div class="inspectBox"><b id="dlgTask"></b><ul id="dlgChecks"></ul></div><div class="actions"><button type="button">📷 Photo</button><button type="button">📎 Attach</button><button type="button">⚠ Create finding</button></div><label>Status</label><select id="statusSelect"><option>Approved</option><option>Follow-up</option><option>Defect</option><option>Not Started</option><option>N/A</option></select><label>Comment</label><textarea id="comment"></textarea><button id="saveBtn" class="primary" value="default">Save to AMOS queue</button></form></dialog><script src="app.js"></script></body></html>
