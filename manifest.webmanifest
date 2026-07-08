@@ -1,7 +1,6 @@
 {
-  "name": "AMOS Field Interface",
-  "short_name": "AMOS Field",
-  "description": "PWA prototype for field inspection execution and management status overview.",
+  "name": "Field Demo Platform",
+  "short_name": "Field Demo",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
