@@ -1,11 +1,4 @@
-# AMOS Field Layer v1.4
+# AMOS Field Layer v1.5
 
-Cleaner demo focused on AMOS field execution:
-- Role switch on home
-- AMOS Sync Queue
-- Today's priorities
-- My Shift
-- AMOS Work Orders
-- PTW and Toolbox
-- Sling Store
-- Stability / Management Dashboard
+Fixed Safari reportBtn error.
+Added cleaner management overview, clickable status lists, This Shift and History.

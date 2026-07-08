@@ -28,7 +28,7 @@
       "id": "management",
       "title": "Management",
       "icon": "\ud83d\udcca",
-      "focus": "Dashboard"
+      "focus": "Overview"
     }
   ],
   "priorities": [
@@ -59,7 +59,8 @@
       "status": "Follow-up",
       "priority": "Medium",
       "progress": 70,
-      "eta": "45 min"
+      "eta": "45 min",
+      "updated": "Today 08:42"
     },
     {
       "id": "WO-104822",
@@ -68,7 +69,8 @@
       "status": "Not Started",
       "priority": "Normal",
       "progress": 35,
-      "eta": "35 min"
+      "eta": "35 min",
+      "updated": "Today 07:15"
     },
     {
       "id": "WO-104823",
@@ -77,7 +79,8 @@
       "status": "Defect",
       "priority": "High",
       "progress": 55,
-      "eta": "30 min"
+      "eta": "30 min",
+      "updated": "Today 09:05"
     },
     {
       "id": "WO-104824",
@@ -86,7 +89,8 @@
       "status": "Follow-up",
       "priority": "Medium",
       "progress": 80,
-      "eta": "25 min"
+      "eta": "25 min",
+      "updated": "Today 09:20"
     },
     {
       "id": "WO-104820",
@@ -95,7 +99,8 @@
       "status": "Approved",
       "priority": "Normal",
       "progress": 100,
-      "eta": "Complete"
+      "eta": "Complete",
+      "updated": "Today 07:55"
     }
   ],
   "items": [
@@ -111,6 +116,8 @@
       "priority": "Medium",
       "detail": "Cabinet door hard to open. Needs adjustment.",
       "frequency": "1W",
+      "updated": "Today 08:42",
+      "doneBy": "Deck Crew",
       "checks": [
         "Hose present",
         "Nozzle present",
@@ -130,6 +137,8 @@
       "priority": "High",
       "detail": "Pressure gauge below green area. Replace or service extinguisher.",
       "frequency": "1M",
+      "updated": "Today 08:55",
+      "doneBy": "AB / Deck",
       "checks": [
         "Pressure gauge checked",
         "Safety pin checked",
@@ -150,6 +159,8 @@
       "detail": "Visual check OK.",
       "frequency": "1W",
       "cert": "Valid until 2027-03-15",
+      "updated": "Today 07:35",
+      "doneBy": "Deck Crew",
       "checks": [
         "Access clear",
         "Covers secure",
@@ -170,6 +181,8 @@
       "detail": "One securing strap shows wear. Monitor / replace if deterioration continues.",
       "frequency": "1W",
       "cert": "Valid until 2027-02-11",
+      "updated": "Today 08:12",
+      "doneBy": "Deck Crew",
       "checks": [
         "Access clear",
         "Securing arrangement checked",
@@ -189,6 +202,8 @@
       "priority": "Normal",
       "detail": "DROP and housekeeping inspection completed. No loose equipment observed.",
       "frequency": "Daily",
+      "updated": "Today 07:55",
+      "doneBy": "AB / Deck",
       "checks": [
         "Couplings and hoses checked",
         "Safety equipment accessible",
@@ -208,6 +223,8 @@
       "priority": "Medium",
       "detail": "Yellow escape marking partly slippery. Needs cleaning / anti-slip follow-up.",
       "frequency": "Daily",
+      "updated": "Today 08:03",
+      "doneBy": "AB / Deck",
       "checks": [
         "Access checked",
         "Escape route condition checked",
@@ -227,6 +244,8 @@
       "priority": "Low",
       "detail": "Minor housekeeping observations. No immediate safety critical issue.",
       "frequency": "Weekly",
+      "updated": "Today 09:20",
+      "doneBy": "Stability / Deck",
       "checks": [
         "Walkways clear",
         "Escape routes clear",
@@ -252,6 +271,8 @@
       "dateOut": "2026-07-08",
       "expectedReturn": "2026-07-22",
       "cert": "Valid until 2027-02-10",
+      "updated": "Today 09:00",
+      "doneBy": "Deck Crew",
       "checks": [
         "Certificate valid",
         "Chain condition OK",
@@ -277,6 +298,8 @@
       "dateOut": "2026-06-10",
       "expectedReturn": "2026-06-24",
       "cert": "Valid until 2027-02-10",
+      "updated": "Today 09:05",
+      "doneBy": "Deck Crew",
       "checks": [
         "Loan overdue",
         "Location known",
@@ -297,6 +320,8 @@
       "frequency": "On Use",
       "loan": "Quarantine",
       "cert": "Quarantined",
+      "updated": "Today 09:08",
+      "doneBy": "Lifting Responsible",
       "checks": [
         "Tag readable",
         "Broken wires observed",
@@ -317,12 +342,40 @@
       "frequency": "Monthly",
       "loan": "In Store",
       "cert": "Expiring soon: 2026-08-01",
+      "updated": "Today 09:10",
+      "doneBy": "Deck Crew",
       "checks": [
         "Certificate checked",
         "ID readable",
         "Stored correctly",
         "Recertification planned"
       ]
+    }
+  ],
+  "history": [
+    {
+      "date": "Yesterday",
+      "title": "Daily Deck Round",
+      "summary": "Completed 18/18 checks",
+      "status": "Approved"
+    },
+    {
+      "date": "Yesterday",
+      "title": "Sling Store Loan Review",
+      "summary": "2 overdue items recovered",
+      "status": "Approved"
+    },
+    {
+      "date": "2 days ago",
+      "title": "Fire & Safety Round",
+      "summary": "1 hydrant follow-up created",
+      "status": "Follow-up"
+    },
+    {
+      "date": "3 days ago",
+      "title": "LSA Weekly Check",
+      "summary": "Lifeboat stations completed",
+      "status": "Approved"
     }
   ],
   "ptw": [

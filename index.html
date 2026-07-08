@@ -1,120 +1,74 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07131f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="styles.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07131f"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css">
 <title>AMOS Field Layer</title>
 </head>
 <body>
 <div class="app">
 <header class="top">
-  <div>
-    <p class="eyebrow">AMOS Field Layer v1.4</p>
-    <h1>Scarabeo 8</h1>
-    <p id="roleLabel" class="muted">AB / Deck Operator view</p>
-  </div>
+  <div><p class="eyebrow">AMOS Field Layer v1.5</p><h1>Scarabeo 8</h1><p id="roleLabel" class="muted">AB / Deck Operator view</p></div>
   <button id="syncBtn" class="sync">↻</button>
 </header>
-
 <main>
 <section id="home" class="view active">
   <div class="roleSwitch" id="roleSwitch"></div>
-
   <div class="hero">
-    <div>
-      <p class="eyebrow">Today's field execution</p>
-      <h2 id="homeTitle">Loading…</h2>
-      <p id="homeText" class="muted">Preparing AMOS field layer</p>
-    </div>
+    <div><p class="eyebrow">Today's field execution</p><h2 id="homeTitle">Loading…</h2><p id="homeText" class="muted">Preparing AMOS field layer</p></div>
     <div class="ring" id="ring"><span id="ringText">0%</span></div>
   </div>
-
-  <div class="syncBox">
-    <b>AMOS Sync Queue</b>
-    <span id="syncText">12 pending field updates</span>
-  </div>
-
+  <div class="syncBox"><b>AMOS Sync Queue</b><span id="syncText">12 pending field updates</span></div>
   <div class="quick">
     <button data-go="shift"><span>☑</span><b>My Shift</b><small>Assigned jobs</small></button>
     <button data-go="amos"><span>🔧</span><b>AMOS Jobs</b><small>WO / PTW / Toolbox</small></button>
     <button data-go="sling"><span>⚓</span><b>Sling Store</b><small>Loans & certificates</small></button>
-    <button data-go="dashboard"><span>📊</span><b>Dashboard</b><small>Supervisor view</small></button>
+    <button data-go="management"><span>📊</span><b>Management</b><small>Clean overview</small></button>
   </div>
-
-  <section class="panel">
-    <div class="panelTitle"><h3>Today's Priorities</h3><small>What needs attention first</small></div>
-    <div id="priorityList"></div>
-  </section>
+  <section class="panel"><div class="panelTitle"><h3>Today's Priorities</h3><small>What needs attention first</small></div><div id="priorityList"></div></section>
 </section>
-
 <section id="shift" class="view">
   <div class="head"><div><p class="eyebrow">Crew Mode</p><h2>My Shift</h2></div><button class="ghost" id="resetBtn">Reset</button></div>
-  <input id="search" class="search" placeholder="Search tag, AMOS WO, location, module…">
-  <div id="shiftList" class="cards"></div>
+  <input id="search" class="search" placeholder="Search tag, AMOS WO, location, module…"><div id="shiftList" class="cards"></div>
 </section>
-
 <section id="amos" class="view">
   <div class="head"><div><p class="eyebrow">AMOS Simulation</p><h2>Work Orders</h2></div><button class="ghost" id="scanBtn">Scan QR</button></div>
   <div id="woList" class="cards"></div>
   <section class="panel"><div class="panelTitle"><h3>PTW Overview</h3><small>Demo only</small></div><div id="ptwList"></div></section>
   <section class="panel"><div class="panelTitle"><h3>Toolbox Talk</h3><small>Today</small></div><div id="toolboxList"></div></section>
 </section>
-
 <section id="sling" class="view">
   <div class="head"><div><p class="eyebrow">Sling Store</p><h2>Loan Register</h2></div><button class="ghost" id="takeOutBtn">Take Out</button></div>
-  <div class="kpis">
-    <div><small>Out</small><b id="outCount">0</b></div>
-    <div><small>Overdue</small><b id="overdueCount">0</b></div>
-    <div><small>Quarantine</small><b id="quarantineCount">0</b></div>
-    <div><small>Cert due</small><b id="certCount">0</b></div>
-  </div>
+  <div class="kpis"><button data-list="Out"><small>Out</small><b id="outCount">0</b></button><button data-list="Overdue"><small>Overdue</small><b id="overdueCount">0</b></button><button data-list="Quarantine"><small>Quarantine</small><b id="quarantineCount">0</b></button><button data-list="CertDue"><small>Cert due</small><b id="certCount">0</b></button></div>
   <div id="slingList" class="cards"></div>
 </section>
-
-<section id="dashboard" class="view">
-  <div class="head"><div><p class="eyebrow">Stability / Management</p><h2>Dashboard</h2></div><span class="badge">Offline-ready</span></div>
-  <div class="kpis">
-    <div><small>Completion</small><b id="dashPct">0%</b></div>
-    <div><small>Critical</small><b id="dashCritical">0</b></div>
-    <div><small>Overdue</small><b id="dashOverdue">0</b></div>
-    <div><small>Pending Sync</small><b id="dashSync">0</b></div>
+<section id="management" class="view">
+  <div class="head"><div><p class="eyebrow">Management</p><h2>Overview</h2></div><span class="badge">Live demo</span></div>
+  <div class="tabs"><button class="tab active" data-mgmt="shiftPanel">This Shift</button><button class="tab" data-mgmt="statusPanel">Status Lists</button><button class="tab" data-mgmt="historyPanel">History</button></div>
+  <div id="shiftPanel" class="mgmtPanel active">
+    <div class="kpis"><button data-list="Approved"><small>Completed</small><b id="mCompleted">0</b></button><button data-list="Remaining"><small>Remaining</small><b id="mRemaining">0</b></button><button data-list="Defect"><small>Defects</small><b id="mDefects">0</b></button><button data-list="Follow-up"><small>Follow-up</small><b id="mFollow">0</b></button></div>
+    <section class="panel"><div class="panelTitle"><h3>Module Progress</h3><small>Tap KPI boxes for detail</small></div><div id="progressList"></div></section>
   </div>
-  <section class="panel"><div class="panelTitle"><h3>Module Progress</h3><small>Live demo status</small></div><div id="progressList"></div></section>
-  <section class="panel"><div class="panelTitle"><h3>Operations Overview</h3><small>AMOS / PTW / Toolbox</small></div><div id="opsStats"></div></section>
+  <div id="statusPanel" class="mgmtPanel"><div class="quick compact"><button data-list="Approved"><span>✅</span><b>Completed</b><small>See done work</small></button><button data-list="Defect"><span>🔴</span><b>Defects</b><small>Open defects</small></button><button data-list="Follow-up"><span>🟡</span><b>Follow-up</b><small>Needs attention</small></button><button data-list="Overdue"><span>⚓</span><b>Overdue</b><small>Equipment overdue</small></button></div></div>
+  <div id="historyPanel" class="mgmtPanel"><div id="historyList"></div></div>
+</section>
+<section id="listView" class="view">
+  <div class="head"><div><p class="eyebrow">Status list</p><h2 id="listTitle">Items</h2></div><button class="ghost" data-go="management">Back</button></div>
+  <div id="statusList" class="cards"></div>
 </section>
 </main>
-
 <nav class="nav">
-  <button class="navBtn active" data-go="home">⌂<span>Home</span></button>
-  <button class="navBtn" data-go="shift">☑<span>Shift</span></button>
-  <button class="navBtn" data-go="amos">🔧<span>AMOS</span></button>
-  <button class="navBtn" data-go="sling">⚓<span>Sling</span></button>
-  <button class="navBtn" data-go="dashboard">📊<span>Dash</span></button>
+  <button class="navBtn active" data-go="home">⌂<span>Home</span></button><button class="navBtn" data-go="shift">☑<span>Shift</span></button><button class="navBtn" data-go="amos">🔧<span>AMOS</span></button><button class="navBtn" data-go="sling">⚓<span>Sling</span></button><button class="navBtn" data-go="management">📊<span>Mgmt</span></button>
 </nav>
 </div>
-
-<dialog id="dialog">
-<form method="dialog" class="dialogCard">
-<button class="close" value="cancel">×</button>
-<p id="dlgMeta" class="eyebrow"></p>
-<h2 id="dlgTitle"></h2>
-<p id="dlgLocation" class="muted"></p>
-<div class="chips"><span id="dlgTag"></span><span id="dlgWo"></span><span id="dlgCert"></span></div>
-<div id="loanBox" class="loanBox"></div>
+<dialog id="dialog"><form method="dialog" class="dialogCard">
+<button class="close" value="cancel">×</button><p id="dlgMeta" class="eyebrow"></p><h2 id="dlgTitle"></h2><p id="dlgLocation" class="muted"></p>
+<div class="chips"><span id="dlgTag"></span><span id="dlgWo"></span><span id="dlgCert"></span></div><div id="loanBox" class="loanBox"></div>
 <div class="inspectBox"><b id="dlgTask"></b><ul id="dlgChecks"></ul></div>
 <div class="actions"><button type="button">📷 Photo</button><button type="button">📎 Attach</button><button type="button">⚠ Finding</button></div>
-<label>Status</label>
-<select id="statusSelect"><option>Approved</option><option>Follow-up</option><option>Defect</option><option>Not Started</option><option>N/A</option></select>
-<label>Comment</label>
-<textarea id="comment"></textarea>
-<button id="saveBtn" class="primary" value="default">Save to AMOS queue</button>
-</form>
-</dialog>
-
+<label>Status</label><select id="statusSelect"><option>Approved</option><option>Follow-up</option><option>Defect</option><option>Not Started</option><option>N/A</option></select>
+<label>Comment</label><textarea id="comment"></textarea><button id="saveBtn" class="primary" value="default">Save to AMOS queue</button>
+</form></dialog>
 <script src="app.js"></script>
-</body>
-</html>
+</body></html>
