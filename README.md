@@ -1,4 +1,4 @@
-# AMOS Field Interface - PWA Prototype
+# RigFlow - PWA Prototype
 
 Prototype for a mobile field interface that supports preventive maintenance inspection rounds.
 
