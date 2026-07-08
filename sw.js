@@ -1,4 +1,4 @@
-const CACHE_NAME = "field-demo-v10";
+const CACHE_NAME = "field-demo-v11";
 const ASSETS = ["./","index.html","styles.css","app.js","data.json","manifest.webmanifest"];
 self.addEventListener("install", (event) => {
   self.skipWaiting();

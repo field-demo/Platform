@@ -1,17 +1,12 @@
-# Field Demo Platform v1.0
+# Field Demo Platform v1.1
 
-Modules included:
-- Daily Deck Rounds
-- Fire & Safety
-- Life Saving Appliances
-- Sling Store / Lifting Gear
-- Management Dashboard
-
-Includes example statuses:
-- Approved
-- Defect
-- Follow-up
-- N/A
-- Not Started
+Added:
+- Sling Store loan register
+- Short term and long term loans
+- Overdue items
+- Quarantine
+- Certificate expiring soon
+- Maintenance Program module
+- Additional chain hoist examples
 
 No signature function is included.

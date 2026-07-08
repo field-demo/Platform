@@ -1,93 +1,60 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07131f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="styles.css">
-<title>Field Demo Platform</title>
-</head>
-<body>
-<div class="app-shell">
-<header class="topbar">
-  <div><p class="eyebrow">Field Demo v1.0</p><h1>Field Execution Platform</h1></div>
-  <button id="syncButton" class="icon-button">↻</button>
-</header>
-
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07131f"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css">
+<title>Field Demo Platform</title></head>
+<body><div class="app-shell">
+<header class="topbar"><div><p class="eyebrow">Field Demo v1.1</p><h1>Field Execution Platform</h1></div><button id="syncButton" class="icon-button">↻</button></header>
 <main>
 <section id="homeView" class="view is-active">
-  <div class="hero-card">
-    <div><p class="eyebrow">Today's work scope</p><h2 id="heroTitle">Loading…</h2><p id="heroSummary"></p></div>
-    <div class="progress-ring" id="progressRing"><span id="progressPercent">0%</span></div>
-  </div>
-  <div id="moduleGrid" class="module-grid"></div>
-  <section class="panel"><div class="panel-title"><h3>Area status</h3><small>Tap any area</small></div><div id="areaOverview" class="deck-list"></div></section>
+<div class="hero-card"><div><p class="eyebrow">Today's work scope</p><h2 id="heroTitle">Loading…</h2><p id="heroSummary"></p></div><div class="progress-ring" id="progressRing"><span id="progressPercent">0%</span></div></div>
+<div id="moduleGrid" class="module-grid"></div>
+<section class="panel"><div class="panel-title"><h3>Sling Store Alerts</h3><small>Loans / overdue / certificates</small></div><div id="slingAlerts"></div></section>
+<section class="panel"><div class="panel-title"><h3>Area status</h3><small>Tap any area</small></div><div id="areaOverview" class="deck-list"></div></section>
 </section>
 
 <section id="itemsView" class="view">
-  <div class="section-head"><div><p class="eyebrow">Field execution</p><h2>Work Items</h2></div><button class="small-button" id="resetButton">Reset</button></div>
-  <div class="filter-row">
-    <button class="filter-pill is-selected" data-filter="All">All</button>
-    <button class="filter-pill" data-filter="Daily">Daily</button>
-    <button class="filter-pill" data-filter="1W">1W</button>
-    <button class="filter-pill" data-filter="1M">1M</button>
-    <button class="filter-pill" data-filter="On Use">On Use</button>
-  </div>
-  <input id="searchInput" class="search-input" type="search" placeholder="Search local tag, module, equipment, deck or location">
-  <div id="taskList" class="task-list"></div>
+<div class="section-head"><div><p class="eyebrow">Field execution</p><h2>Work Items</h2></div><button class="small-button" id="resetButton">Reset</button></div>
+<div class="filter-row"><button class="filter-pill is-selected" data-filter="All">All</button><button class="filter-pill" data-filter="Daily">Daily</button><button class="filter-pill" data-filter="1W">1W</button><button class="filter-pill" data-filter="On Use">On Use</button><button class="filter-pill" data-filter="Long Term">Long Term</button></div>
+<input id="searchInput" class="search-input" type="search" placeholder="Search local tag, module, equipment, deck, loan holder or location">
+<div id="taskList" class="task-list"></div>
 </section>
 
-<section id="findingsView" class="view">
-  <div class="section-head"><div><p class="eyebrow">Open items</p><h2>Findings</h2></div></div>
-  <div id="findingsList" class="task-list"></div>
+<section id="slingView" class="view">
+<div class="section-head"><div><p class="eyebrow">Sling Store</p><h2>Loan Register</h2></div><button class="small-button" id="newLoanButton">Demo take-out</button></div>
+<div class="manager-grid"><div class="manager-card"><small>Out</small><strong id="loanOut">0</strong></div><div class="manager-card"><small>Overdue</small><strong id="loanOverdue">0</strong></div><div class="manager-card"><small>Quarantine</small><strong id="loanQuarantine">0</strong></div><div class="manager-card"><small>Cert due</small><strong id="loanCertDue">0</strong></div></div>
+<div class="filter-row"><button class="filter-pill sling-filter is-selected" data-sling="All">All</button><button class="filter-pill sling-filter" data-sling="Out">Out</button><button class="filter-pill sling-filter" data-sling="Overdue">Overdue</button><button class="filter-pill sling-filter" data-sling="Quarantine">Quarantine</button></div>
+<div id="loanList" class="task-list"></div>
 </section>
+
+<section id="findingsView" class="view"><div class="section-head"><div><p class="eyebrow">Open items</p><h2>Findings</h2></div></div><div id="findingsList" class="task-list"></div></section>
 
 <section id="managementView" class="view">
-  <div class="section-head"><div><p class="eyebrow">Leadership dashboard</p><h2>Live status</h2></div><span class="status-badge">Offline-ready</span></div>
-  <div class="manager-grid">
-    <div class="manager-card"><small>Completion</small><strong id="managerCompletion">0%</strong></div>
-    <div class="manager-card"><small>Remaining</small><strong id="managerRemaining">0</strong></div>
-    <div class="manager-card"><small>Defects</small><strong id="managerDefects">0</strong></div>
-    <div class="manager-card"><small>Follow-up</small><strong id="managerFollow">0</strong></div>
-  </div>
-  <section class="panel"><div class="panel-title"><h3>By module</h3><small>Daily, LSA, Fire, Lifting</small></div><div id="moduleStats"></div></section>
-  <section class="panel"><div class="panel-title"><h3>Certificate / lifting overview</h3><small>Competent person status</small></div><div id="certStats"></div></section>
+<div class="section-head"><div><p class="eyebrow">Leadership dashboard</p><h2>Live status</h2></div><span class="status-badge">Offline-ready</span></div>
+<div class="manager-grid"><div class="manager-card"><small>Completion</small><strong id="managerCompletion">0%</strong></div><div class="manager-card"><small>Remaining</small><strong id="managerRemaining">0</strong></div><div class="manager-card"><small>Defects</small><strong id="managerDefects">0</strong></div><div class="manager-card"><small>Follow-up</small><strong id="managerFollow">0</strong></div></div>
+<section class="panel"><div class="panel-title"><h3>By module</h3><small>Daily, LSA, Fire, Sling, Maintenance</small></div><div id="moduleStats"></div></section>
+<section class="panel"><div class="panel-title"><h3>Sling Store Overview</h3><small>Loan and certificate status</small></div><div id="loanStats"></div></section>
 </section>
 </main>
 
 <nav class="bottom-nav">
-  <button class="nav-button is-active" data-nav="homeView">⌂<span>Home</span></button>
-  <button class="nav-button" data-nav="itemsView">▦<span>Items</span></button>
-  <button class="nav-button" data-nav="findingsView">⚠<span>Findings</span></button>
-  <button class="nav-button" data-nav="managementView">📊<span>Mgmt</span></button>
-</nav>
-</div>
+<button class="nav-button is-active" data-nav="homeView">⌂<span>Home</span></button>
+<button class="nav-button" data-nav="itemsView">▦<span>Items</span></button>
+<button class="nav-button" data-nav="slingView">⚓<span>Sling</span></button>
+<button class="nav-button" data-nav="findingsView">⚠<span>Findings</span></button>
+<button class="nav-button" data-nav="managementView">📊<span>Mgmt</span></button>
+</nav></div>
 
-<dialog id="taskDialog">
-<form method="dialog" class="dialog-card">
-<button class="close-button" value="cancel">×</button>
-<p class="eyebrow" id="dialogMeta"></p>
-<h2 id="dialogTitle"></h2>
-<p class="muted" id="dialogLocation"></p>
+<dialog id="taskDialog"><form method="dialog" class="dialog-card">
+<button class="close-button" value="cancel">×</button><p class="eyebrow" id="dialogMeta"></p><h2 id="dialogTitle"></h2><p class="muted" id="dialogLocation"></p>
 <div class="tag-row"><span id="dialogLocalTag"></span><span id="dialogAmosId"></span><span id="dialogCert"></span></div>
+<div id="loanBox" class="loan-box"></div>
 <div class="inspection-box"><strong id="dialogTask"></strong><ul id="checkpointList"></ul></div>
-<label>Status</label>
-<div class="status-select">
-  <button type="button" data-status="Approved">Approved</button>
-  <button type="button" data-status="Defect">Defect</button>
-  <button type="button" data-status="Follow-up">Follow-up</button>
-  <button type="button" data-status="N/A">N/A</button>
-</div>
-<label>Severity</label>
-<select id="severitySelect"><option value="">None</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
-<label>Comment</label>
-<textarea id="commentInput"></textarea>
+<label>Status</label><div class="status-select"><button type="button" data-status="Approved">Approved</button><button type="button" data-status="Defect">Defect</button><button type="button" data-status="Follow-up">Follow-up</button><button type="button" data-status="N/A">N/A</button></div>
+<label>Severity</label><select id="severitySelect"><option value="">None</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
+<label>Comment</label><textarea id="commentInput"></textarea>
 <div class="photo-placeholder"><div>📷</div><span>Photo / document placeholder</span></div>
 <button id="saveTaskButton" class="primary-button" value="default">Save</button>
-</form>
-</dialog>
-<script src="app.js"></script>
-</body>
-</html>
+</form></dialog>
+<script src="app.js"></script></body></html>
