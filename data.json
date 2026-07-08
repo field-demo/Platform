@@ -1,23 +1,54 @@
 {
   "vessel": "Scarabeo 8",
+  "metrics": {
+    "completion": 73,
+    "assigned": 14,
+    "completed": 10,
+    "remaining": 4,
+    "pendingSync": 12,
+    "openFindings": 6,
+    "critical": 2,
+    "overdueEquipment": 2,
+    "certDue": 1
+  },
   "roles": [
     {
       "id": "ab",
       "title": "AB / Deck Operator",
-      "subtitle": "Field execution and rounds",
-      "icon": "\ud83e\uddba"
+      "icon": "\ud83e\uddba",
+      "focus": "My Shift"
     },
     {
       "id": "stability",
       "title": "Stability Leader",
-      "subtitle": "Status, overdue and priorities",
-      "icon": "\ud83d\udee2"
+      "icon": "\ud83d\udee2",
+      "focus": "Priorities"
     },
     {
       "id": "management",
       "title": "Management",
-      "subtitle": "KPI and overview",
-      "icon": "\ud83d\udcca"
+      "icon": "\ud83d\udcca",
+      "focus": "Dashboard"
+    }
+  ],
+  "priorities": [
+    {
+      "title": "Overdue Chain Hoist",
+      "meta": "SCA-01002 \u2022 BOP Gantry Crane",
+      "status": "Critical",
+      "module": "Sling Store"
+    },
+    {
+      "title": "Fire Extinguisher Defect",
+      "meta": "W-BDK-003 \u2022 B-Deck",
+      "status": "High",
+      "module": "Fire & Safety"
+    },
+    {
+      "title": "Certificate Expiring",
+      "meta": "LBM-003 \u2022 24 days remaining",
+      "status": "Medium",
+      "module": "Sling Store"
     }
   ],
   "workOrders": [
@@ -68,44 +99,6 @@
     }
   ],
   "items": [
-    {
-      "id": "daily-wh34",
-      "module": "Daily Rounds",
-      "type": "Area Inspection",
-      "tag": "AREA-WH-34",
-      "wo": "WO-104820",
-      "title": "Winch House 3/4",
-      "location": "M-Deck",
-      "status": "Approved",
-      "priority": "Normal",
-      "detail": "DROP and housekeeping inspection completed. No loose equipment observed.",
-      "frequency": "Daily",
-      "checks": [
-        "Couplings and hoses checked",
-        "Safety equipment accessible",
-        "Housekeeping OK",
-        "Lights and securing devices OK"
-      ]
-    },
-    {
-      "id": "daily-lb-aft",
-      "module": "Daily Rounds",
-      "type": "Area Inspection",
-      "tag": "AREA-LB-AFT",
-      "wo": "WO-104820",
-      "title": "Aft Lifeboat Station",
-      "location": "Tween Deck",
-      "status": "Defect",
-      "priority": "Medium",
-      "detail": "Yellow escape marking partly slippery. Needs cleaning / anti-slip follow-up.",
-      "frequency": "Daily",
-      "checks": [
-        "Access checked",
-        "Escape route condition checked",
-        "Safety equipment accessible",
-        "Lighting checked"
-      ]
-    },
     {
       "id": "fire-fh-udk032",
       "module": "Fire & Safety",
@@ -182,6 +175,44 @@
         "Securing arrangement checked",
         "No visible hull damage",
         "Area free from obstruction"
+      ]
+    },
+    {
+      "id": "daily-wh34",
+      "module": "Daily Rounds",
+      "type": "Area Inspection",
+      "tag": "AREA-WH-34",
+      "wo": "WO-104820",
+      "title": "Winch House 3/4",
+      "location": "M-Deck",
+      "status": "Approved",
+      "priority": "Normal",
+      "detail": "DROP and housekeeping inspection completed. No loose equipment observed.",
+      "frequency": "Daily",
+      "checks": [
+        "Couplings and hoses checked",
+        "Safety equipment accessible",
+        "Housekeeping OK",
+        "Lights and securing devices OK"
+      ]
+    },
+    {
+      "id": "daily-lb-aft",
+      "module": "Daily Rounds",
+      "type": "Area Inspection",
+      "tag": "AREA-LB-AFT",
+      "wo": "WO-104820",
+      "title": "Aft Lifeboat Station",
+      "location": "Tween Deck",
+      "status": "Defect",
+      "priority": "Medium",
+      "detail": "Yellow escape marking partly slippery. Needs cleaning / anti-slip follow-up.",
+      "frequency": "Daily",
+      "checks": [
+        "Access checked",
+        "Escape route condition checked",
+        "Safety equipment accessible",
+        "Lighting checked"
       ]
     },
     {
@@ -329,20 +360,6 @@
     {
       "topic": "Sling Store return discipline",
       "status": "Pending"
-    }
-  ],
-  "notifications": [
-    {
-      "type": "AMOS",
-      "text": "WO-104823 has high priority overdue equipment."
-    },
-    {
-      "type": "Certificate",
-      "text": "LBM-003 expires within 30 days."
-    },
-    {
-      "type": "Finding",
-      "text": "W3 extinguisher requires service or replacement."
     }
   ]
 }

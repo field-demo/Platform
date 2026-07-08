@@ -1,3 +1,11 @@
-# Field Demo AMOS-focused v1.3
+# AMOS Field Layer v1.4
 
-Added role selection, AMOS work orders, PTW overview, Toolbox talk, notifications, QR scan demo, report/AMOS queue demo and Stability/Management dashboard.
+Cleaner demo focused on AMOS field execution:
+- Role switch on home
+- AMOS Sync Queue
+- Today's priorities
+- My Shift
+- AMOS Work Orders
+- PTW and Toolbox
+- Sling Store
+- Stability / Management Dashboard
