@@ -1,1 +1,263 @@
-let allItems=[],filter='All',currentId=null;const KEY='fieldDemoV03';const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));async function init(){let r=await fetch('data.json');let d=await r.json();let s=localStorage.getItem(KEY);allItems=s?JSON.parse(s):d;events();render();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')}function events(){$$('.nav-button').forEach(b=>b.onclick=()=>nav(b.dataset.nav));$$('.filter-pill').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;$$('.filter-pill').forEach(x=>x.classList.remove('is-selected'));b.classList.add('is-selected');list()});$('#searchInput').oninput=list;$('#resetButton').onclick=()=>{localStorage.removeItem(KEY);location.reload()};$('#syncButton').onclick=sync;$$('.status-select button').forEach(b=>b.onclick=()=>{$$('.status-select button').forEach(x=>x.classList.remove('active-status'));b.classList.add('active-status')});$('#saveTaskButton').onclick=saveCurrent}function nav(id){$$('.view').forEach(v=>v.classList.remove('is-active'));$('#'+id).classList.add('is-active');$$('.nav-button').forEach(b=>b.classList.toggle('is-active',b.dataset.nav===id));render()}function store(){localStorage.setItem(KEY,JSON.stringify(allItems))}function pct(items=allItems){let e=items.filter(x=>x.status!=='N/A');return e.length?Math.round(e.filter(x=>x.status==='Approved').length/e.length*100):0}function render(){home();list();findings();mgmt()}function home(){let p=pct(),approved=allItems.filter(x=>x.status==='Approved').length,find=allItems.filter(x=>['Defect','Follow-up'].includes(x.status)).length;$('#heroTitle').textContent=p+'% approved';$('#heroSummary').textContent=approved+' approved / '+allItems.length+' active checks • '+find+' open findings';$('#progressPercent').textContent=p+'%';$('#progressRing').style.background=`conic-gradient(var(--green) ${p*3.6}deg,#243b50 0deg)`;let mods=group(allItems,'module');let icons={'Daily Deck Rounds':'☑','Fire & Safety':'🔥','Life Saving Appliances':'🛟','Sling Store / Lifting Gear':'⚓'};$('#moduleGrid').innerHTML=Object.entries(mods).map(([m,items])=>`<button class="module-card" data-module="${esc(m)}"><span class="icon">${icons[m]||'▦'}</span><strong>${esc(m)}</strong><small>${items.filter(x=>!['Approved','N/A'].includes(x.status)).length} remaining • ${pct(items)}% approved</small></button>`).join('');$$('.module-card').forEach(b=>b.onclick=()=>{nav('roundsView');$('#searchInput').value=b.dataset.module;list()});let areas=group(allItems,'area');$('#areaOverview').innerHTML=Object.entries(areas).map(([a,items])=>`<button class="deck-row" data-area="${esc(a)}"><div><strong>${esc(a)}</strong><small>${pct(items)}% approved</small></div><span class="badge">${items.filter(x=>!['Approved','N/A'].includes(x.status)).length} remaining</span></button>`).join('');$$('#areaOverview .deck-row').forEach(b=>b.onclick=()=>{nav('roundsView');$('#searchInput').value=b.dataset.area;list()})}function list(){let q=($('#searchInput')?.value||'').toLowerCase();let arr=allItems.filter(x=>(filter==='All'||x.frequency===filter)&&JSON.stringify(x).toLowerCase().includes(q));$('#taskList').innerHTML=arr.map(card).join('')||empty('No matching items');$$('#taskList .task-card').forEach(c=>c.onclick=()=>openItem(c.dataset.id))}function card(x){let cert=x.certificateStatus?`<p>Cert: ${esc(x.certificateStatus)} ${x.nextDue?('• Due '+esc(x.nextDue)):''}</p>`:'';return`<button class="task-card" data-id="${esc(x.id)}"><div><h3>${esc(x.title)}</h3><p>${esc(x.module)} • ${esc(x.location)}</p><p>${esc(x.localTag)} • ${esc(x.frequency)}</p>${cert}${x.comment?`<p>${esc(x.comment)}</p>`:''}</div><div class="badges"><span class="badge">${esc(x.category)}</span><span class="status ${cls(x.status)}">${esc(x.status)}</span></div></button>`}function openItem(id){currentId=id;let x=allItems.find(i=>i.id===id);$('#dialogMeta').textContent=x.module+' • '+x.frequency;$('#dialogTitle').textContent=x.title;$('#dialogLocation').textContent=x.location+' • '+x.deck;$('#dialogLocalTag').textContent='Local tag: '+x.localTag;$('#dialogAmosId').textContent='ID: '+x.amosId;$('#dialogCert').textContent=x.certificateStatus?('Cert: '+x.certificateStatus):'No cert';$('#dialogTask').textContent=x.task;$('#checkpointList').innerHTML=(x.checkpoints||[]).map(c=>`<li>${esc(c)}</li>`).join('');$('#commentInput').value=x.comment||'';$('#severitySelect').value=x.severity||'';$$('.status-select button').forEach(b=>b.classList.toggle('active-status',b.dataset.status===x.status));$('#taskDialog').showModal()}function saveCurrent(){let x=allItems.find(i=>i.id===currentId),a=$('.status-select button.active-status');if(x){x.status=a?a.dataset.status:x.status;x.comment=$('#commentInput').value.trim();x.severity=$('#severitySelect').value;x.updatedAt=new Date().toISOString();store();render()}}function findings(){let f=allItems.filter(x=>['Defect','Follow-up'].includes(x.status));$('#findingsList').innerHTML=f.map(card).join('')||empty('No open findings');$$('#findingsList .task-card').forEach(c=>c.onclick=()=>openItem(c.dataset.id))}function mgmt(){let rem=allItems.filter(x=>!['Approved','N/A'].includes(x.status)).length,def=allItems.filter(x=>x.status==='Defect').length,fol=allItems.filter(x=>x.status==='Follow-up').length;$('#managerCompletion').textContent=pct()+'%';$('#managerRemaining').textContent=rem;$('#managerDefects').textContent=def;$('#managerFollow').textContent=fol;$('#moduleStats').innerHTML=Object.entries(group(allItems,'module')).map(([m,items])=>progress(m,items)).join('');let cert=allItems.filter(x=>x.certificateStatus);$('#certStats').innerHTML=['Valid','Expiring Soon','Quarantined'].map(s=>{let items=cert.filter(x=>x.certificateStatus===s);return progress(s,items.length?items:[])}).join('')}function progress(label,items){let p=items.length?pct(items):0,d=items.filter(x=>x.status==='Approved').length;return`<div class="stat-row"><div class="stat-top"><span>${esc(label)}</span><span>${d}/${items.length} • ${p}%</span></div><div class="bar ${label==='Quarantined'?'red':label==='Expiring Soon'?'orange':''}"><div style="width:${p}%"></div></div></div>`}function sync(){$('#syncButton').textContent='…';setTimeout(()=>{$('#syncButton').textContent='✓';setTimeout(()=>$('#syncButton').textContent='↻',900)},700)}function group(items,k){return items.reduce((g,i)=>{(g[i[k]||'Unknown']??=[]).push(i);return g},{})}function empty(t){return`<div class="panel"><h3>${esc(t)}</h3><p class="muted">Try another filter or search term.</p></div>`}function cls(s){return s==='N/A'?'NA':s}function esc(v){return String(v).replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#039;'}[c]))}init();
+let allItems = [];
+let activeFilter = "All";
+let currentId = null;
+const STORAGE_KEY = "fieldDemoV10";
+
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+async function init() {
+  try {
+    const response = await fetch("data.json", { cache: "no-store" });
+    const seedData = await response.json();
+    const stored = localStorage.getItem(STORAGE_KEY);
+    allItems = stored ? JSON.parse(stored) : seedData;
+    registerEvents();
+    render();
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+  } catch (error) {
+    document.getElementById("heroTitle").textContent = "Load error";
+    document.getElementById("heroSummary").textContent = String(error);
+  }
+}
+
+function registerEvents() {
+  $$(".nav-button").forEach((button) => {
+    button.addEventListener("click", () => navigate(button.dataset.nav));
+  });
+
+  $$(".filter-pill").forEach((button) => {
+    button.addEventListener("click", () => {
+      activeFilter = button.dataset.filter;
+      $$(".filter-pill").forEach((x) => x.classList.remove("is-selected"));
+      button.classList.add("is-selected");
+      renderList();
+    });
+  });
+
+  $("#searchInput").addEventListener("input", renderList);
+  $("#resetButton").addEventListener("click", resetDemo);
+  $("#syncButton").addEventListener("click", simulateSync);
+
+  $$(".status-select button").forEach((button) => {
+    button.addEventListener("click", () => {
+      $$(".status-select button").forEach((x) => x.classList.remove("active-status"));
+      button.classList.add("active-status");
+    });
+  });
+
+  $("#saveTaskButton").addEventListener("click", saveCurrent);
+}
+
+function navigate(viewId) {
+  $$(".view").forEach((view) => view.classList.remove("is-active"));
+  $("#" + viewId).classList.add("is-active");
+  $$(".nav-button").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.nav === viewId);
+  });
+  render();
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(allItems));
+}
+
+function completionPercent(items = allItems) {
+  const effective = items.filter((item) => item.status !== "N/A");
+  if (!effective.length) return 0;
+  const done = effective.filter((item) => item.status === "Approved").length;
+  return Math.round((done / effective.length) * 100);
+}
+
+function render() {
+  renderHome();
+  renderList();
+  renderFindings();
+  renderManagement();
+}
+
+function renderHome() {
+  const percent = completionPercent();
+  const approved = allItems.filter((item) => item.status === "Approved").length;
+  const openFindings = allItems.filter((item) => item.status === "Defect" || item.status === "Follow-up").length;
+
+  $("#heroTitle").textContent = percent + "% approved";
+  $("#heroSummary").textContent = approved + " approved / " + allItems.length + " active checks • " + openFindings + " open findings";
+  $("#progressPercent").textContent = percent + "%";
+  $("#progressRing").style.background = "conic-gradient(var(--green) " + (percent * 3.6) + "deg,#243b50 0deg)";
+
+  const modules = groupBy(allItems, "module");
+  const icons = {
+    "Daily Deck Rounds": "☑",
+    "Fire & Safety": "🔥",
+    "Life Saving Appliances": "🛟",
+    "Sling Store / Lifting Gear": "⚓"
+  };
+
+  $("#moduleGrid").innerHTML = Object.entries(modules).map(([module, items]) => {
+    const remaining = items.filter((item) => item.status !== "Approved" && item.status !== "N/A").length;
+    return '<button class="module-card" data-module="' + escapeHtml(module) + '">' +
+      '<span class="icon">' + (icons[module] || "▦") + '</span>' +
+      '<strong>' + escapeHtml(module) + '</strong>' +
+      '<small>' + remaining + ' remaining • ' + completionPercent(items) + '% approved</small>' +
+      '</button>';
+  }).join("");
+
+  $$("#moduleGrid .module-card").forEach((button) => {
+    button.addEventListener("click", () => {
+      navigate("itemsView");
+      $("#searchInput").value = button.dataset.module;
+      renderList();
+    });
+  });
+
+  const areas = groupBy(allItems, "area");
+  $("#areaOverview").innerHTML = Object.entries(areas).map(([area, items]) => {
+    const remaining = items.filter((item) => item.status !== "Approved" && item.status !== "N/A").length;
+    return '<button class="deck-row" data-area="' + escapeHtml(area) + '">' +
+      '<div><strong>' + escapeHtml(area) + '</strong><small>' + completionPercent(items) + '% approved</small></div>' +
+      '<span class="badge">' + remaining + ' remaining</span></button>';
+  }).join("");
+
+  $$("#areaOverview .deck-row").forEach((button) => {
+    button.addEventListener("click", () => {
+      navigate("itemsView");
+      $("#searchInput").value = button.dataset.area;
+      renderList();
+    });
+  });
+}
+
+function renderList() {
+  const search = ($("#searchInput") ? $("#searchInput").value : "").toLowerCase();
+  const filtered = allItems.filter((item) => {
+    const matchesFilter = activeFilter === "All" || item.frequency === activeFilter;
+    const text = JSON.stringify(item).toLowerCase();
+    return matchesFilter && text.includes(search);
+  });
+
+  $("#taskList").innerHTML = filtered.map(cardHtml).join("") || emptyState("No matching items");
+  $$("#taskList .task-card").forEach((card) => {
+    card.addEventListener("click", () => openItem(card.dataset.id));
+  });
+}
+
+function cardHtml(item) {
+  const cert = item.certificateStatus ? '<p>Cert: ' + escapeHtml(item.certificateStatus) + (item.nextDue ? ' • Due ' + escapeHtml(item.nextDue) : '') + '</p>' : '';
+  const comment = item.comment ? '<p>' + escapeHtml(item.comment) + '</p>' : '';
+  return '<button class="task-card" data-id="' + escapeHtml(item.id) + '">' +
+    '<div><h3>' + escapeHtml(item.title) + '</h3>' +
+    '<p>' + escapeHtml(item.module) + ' • ' + escapeHtml(item.location) + '</p>' +
+    '<p>' + escapeHtml(item.localTag) + ' • ' + escapeHtml(item.frequency) + '</p>' +
+    cert + comment + '</div>' +
+    '<div class="badges"><span class="badge">' + escapeHtml(item.category) + '</span>' +
+    '<span class="status ' + statusClass(item.status) + '">' + escapeHtml(item.status) + '</span></div>' +
+    '</button>';
+}
+
+function openItem(id) {
+  currentId = id;
+  const item = allItems.find((x) => x.id === id);
+  if (!item) return;
+
+  $("#dialogMeta").textContent = item.module + " • " + item.frequency;
+  $("#dialogTitle").textContent = item.title;
+  $("#dialogLocation").textContent = item.location + " • " + item.deck;
+  $("#dialogLocalTag").textContent = "Local tag: " + item.localTag;
+  $("#dialogAmosId").textContent = "ID: " + item.amosId;
+  $("#dialogCert").textContent = item.certificateStatus ? "Cert: " + item.certificateStatus : "No cert";
+  $("#dialogTask").textContent = item.task;
+  $("#checkpointList").innerHTML = (item.checkpoints || []).map((checkpoint) => "<li>" + escapeHtml(checkpoint) + "</li>").join("");
+  $("#commentInput").value = item.comment || "";
+  $("#severitySelect").value = item.severity || "";
+
+  $$(".status-select button").forEach((button) => {
+    button.classList.toggle("active-status", button.dataset.status === item.status);
+  });
+
+  $("#taskDialog").showModal();
+}
+
+function saveCurrent() {
+  const item = allItems.find((x) => x.id === currentId);
+  const active = $(".status-select button.active-status");
+  if (!item) return;
+  item.status = active ? active.dataset.status : item.status;
+  item.comment = $("#commentInput").value.trim();
+  item.severity = $("#severitySelect").value;
+  item.updatedAt = new Date().toISOString();
+  saveState();
+  render();
+}
+
+function renderFindings() {
+  const findings = allItems.filter((item) => item.status === "Defect" || item.status === "Follow-up");
+  $("#findingsList").innerHTML = findings.map(cardHtml).join("") || emptyState("No open findings");
+  $$("#findingsList .task-card").forEach((card) => {
+    card.addEventListener("click", () => openItem(card.dataset.id));
+  });
+}
+
+function renderManagement() {
+  const remaining = allItems.filter((item) => item.status !== "Approved" && item.status !== "N/A").length;
+  const defects = allItems.filter((item) => item.status === "Defect").length;
+  const follow = allItems.filter((item) => item.status === "Follow-up").length;
+
+  $("#managerCompletion").textContent = completionPercent() + "%";
+  $("#managerRemaining").textContent = remaining;
+  $("#managerDefects").textContent = defects;
+  $("#managerFollow").textContent = follow;
+
+  $("#moduleStats").innerHTML = Object.entries(groupBy(allItems, "module")).map(([module, items]) => progressRow(module, items)).join("");
+
+  const certItems = allItems.filter((item) => item.certificateStatus);
+  $("#certStats").innerHTML = ["Valid", "Expiring Soon", "Quarantined"].map((status) => {
+    return progressRow(status, certItems.filter((item) => item.certificateStatus === status), status);
+  }).join("");
+}
+
+function progressRow(label, items, styleLabel) {
+  const percent = completionPercent(items);
+  const done = items.filter((item) => item.status === "Approved").length;
+  const barClass = styleLabel === "Quarantined" ? " red" : (styleLabel === "Expiring Soon" ? " orange" : "");
+  return '<div class="stat-row"><div class="stat-top"><span>' + escapeHtml(label) + '</span><span>' + done + '/' + items.length + ' • ' + percent + '%</span></div><div class="bar' + barClass + '"><div style="width:' + percent + '%"></div></div></div>';
+}
+
+function simulateSync() {
+  $("#syncButton").textContent = "…";
+  setTimeout(() => {
+    $("#syncButton").textContent = "✓";
+    setTimeout(() => { $("#syncButton").textContent = "↻"; }, 900);
+  }, 700);
+}
+
+function resetDemo() {
+  localStorage.removeItem(STORAGE_KEY);
+  window.location.reload();
+}
+
+function groupBy(items, key) {
+  return items.reduce((groups, item) => {
+    const value = item[key] || "Unknown";
+    if (!groups[value]) groups[value] = [];
+    groups[value].push(item);
+    return groups;
+  }, {});
+}
+
+function emptyState(text) {
+  return '<div class="panel"><h3>' + escapeHtml(text) + '</h3><p class="muted">Try another filter or search term.</p></div>';
+}
+
+function statusClass(status) {
+  return status === "N/A" ? "NA" : status;
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => {
+    const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
+    return map[char];
+  });
+}
+
+init();

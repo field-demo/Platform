@@ -1,4 +1,4 @@
-# Field Demo Platform v0.3
+# Field Demo Platform v1.0
 
 Modules included:
 - Daily Deck Rounds
@@ -6,5 +6,12 @@ Modules included:
 - Life Saving Appliances
 - Sling Store / Lifting Gear
 - Management Dashboard
+
+Includes example statuses:
+- Approved
+- Defect
+- Follow-up
+- N/A
+- Not Started
 
 No signature function is included.
