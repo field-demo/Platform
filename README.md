@@ -1,4 +1,4 @@
-# RigFlow - PWA Prototype
+# Platform - PWA Prototype
 
 Prototype for a mobile field interface that supports preventive maintenance inspection rounds.
 
