@@ -1,274 +1,175 @@
-let allItems = [];
-let activeFilter = "All";
-let activeSlingFilter = "All";
+let db = null;
 let currentId = null;
-const STORAGE_KEY = "fieldDemoV11";
+let slingFilter = "All";
+const KEY = "fieldDemoCleanV12";
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
 
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-
-async function init() {
-  try {
-    const response = await fetch("data.json", { cache: "no-store" });
-    const seedData = await response.json();
-    const stored = localStorage.getItem(STORAGE_KEY);
-    allItems = stored ? JSON.parse(stored) : seedData;
-    registerEvents();
+async function init(){
+  try{
+    const res = await fetch("data.json", {cache:"no-store"});
+    const seed = await res.json();
+    const stored = localStorage.getItem(KEY);
+    db = stored ? JSON.parse(stored) : seed;
+    bind();
     render();
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
-  } catch (error) {
-    $("#heroTitle").textContent = "Load error";
-    $("#heroSummary").textContent = String(error);
+    if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+  }catch(e){
+    $("#homeTitle").textContent = "Load error";
+    $("#homeText").textContent = String(e);
   }
 }
 
-function registerEvents() {
-  $$(".nav-button").forEach((button) => button.addEventListener("click", () => navigate(button.dataset.nav)));
-
-  $$(".filter-pill[data-filter]").forEach((button) => {
-    button.addEventListener("click", () => {
-      activeFilter = button.dataset.filter;
-      $$(".filter-pill[data-filter]").forEach((x) => x.classList.remove("is-selected"));
-      button.classList.add("is-selected");
-      renderList();
-    });
-  });
-
-  $$(".sling-filter").forEach((button) => {
-    button.addEventListener("click", () => {
-      activeSlingFilter = button.dataset.sling;
-      $$(".sling-filter").forEach((x) => x.classList.remove("is-selected"));
-      button.classList.add("is-selected");
-      renderSlingStore();
-    });
-  });
-
-  $("#searchInput").addEventListener("input", renderList);
-  $("#resetButton").addEventListener("click", resetDemo);
-  $("#syncButton").addEventListener("click", simulateSync);
-  $("#newLoanButton").addEventListener("click", () => alert("Demo: Take-out form would register ID tag, equipment, loaned by, used at, date out and expected return."));
-
-  $$(".status-select button").forEach((button) => {
-    button.addEventListener("click", () => {
-      $$(".status-select button").forEach((x) => x.classList.remove("active-status"));
-      button.classList.add("active-status");
-    });
-  });
-
-  $("#saveTaskButton").addEventListener("click", saveCurrent);
+function bind(){
+  $$("[data-go]").forEach(b => b.addEventListener("click", () => go(b.dataset.go)));
+  $("#search").addEventListener("input", renderShift);
+  $("#resetBtn").addEventListener("click", () => { localStorage.removeItem(KEY); location.reload(); });
+  $("#syncBtn").addEventListener("click", syncDemo);
+  $("#takeOutBtn").addEventListener("click", () => alert("Demo: Take Out form would register ID tag, equipment, borrowed by, used at, date out and expected return."));
+  $$(".tab").forEach(t => t.addEventListener("click", () => {
+    slingFilter = t.dataset.sling;
+    $$(".tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    renderSling();
+  }));
+  $("#saveBtn").addEventListener("click", saveItem);
 }
 
-function navigate(viewId) {
-  $$(".view").forEach((view) => view.classList.remove("is-active"));
-  $("#" + viewId).classList.add("is-active");
-  $$(".nav-button").forEach((button) => button.classList.toggle("is-active", button.dataset.nav === viewId));
+function go(id){
+  $$(".view").forEach(v => v.classList.remove("active"));
+  $("#" + id).classList.add("active");
+  $$(".navBtn").forEach(b => b.classList.toggle("active", b.dataset.go === id));
   render();
 }
 
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(allItems));
+function save(){ localStorage.setItem(KEY, JSON.stringify(db)); }
+
+function allItems(){ return db.items; }
+function pct(items = allItems()){
+  const effective = items.filter(i => i.status !== "N/A");
+  if(!effective.length) return 0;
+  return Math.round(effective.filter(i => i.status === "Approved").length / effective.length * 100);
 }
 
-function completionPercent(items = allItems) {
-  const effective = items.filter((item) => item.status !== "N/A");
-  if (!effective.length) return 0;
-  const done = effective.filter((item) => item.status === "Approved").length;
-  return Math.round((done / effective.length) * 100);
-}
-
-function render() {
+function render(){
   renderHome();
-  renderList();
-  renderSlingStore();
+  renderShift();
+  renderSling();
   renderFindings();
-  renderManagement();
+  renderDash();
 }
 
-function renderHome() {
-  const percent = completionPercent();
-  const approved = allItems.filter((item) => item.status === "Approved").length;
-  const openFindings = allItems.filter((item) => item.status === "Defect" || item.status === "Follow-up").length;
-  $("#heroTitle").textContent = percent + "% approved";
-  $("#heroSummary").textContent = approved + " approved / " + allItems.length + " active checks • " + openFindings + " open findings";
-  $("#progressPercent").textContent = percent + "%";
-  $("#progressRing").style.background = "conic-gradient(var(--green) " + (percent * 3.6) + "deg,#243b50 0deg)";
+function renderHome(){
+  const p = pct();
+  const approved = allItems().filter(i => i.status === "Approved").length;
+  const findings = allItems().filter(i => ["Defect","Follow-up"].includes(i.status)).length;
+  $("#homeTitle").textContent = p + "% complete";
+  $("#homeText").textContent = approved + " approved / " + allItems().length + " checks • " + findings + " open findings";
+  $("#ringText").textContent = p + "%";
+  $("#ring").style.background = "conic-gradient(var(--green) " + (p*3.6) + "deg,#243b50 0deg)";
+  $("#findingsCount").textContent = findings + " open";
 
-  const modules = groupBy(allItems, "module");
-  const icons = {"Daily Deck Rounds":"☑","Maintenance Program":"▣","Fire & Safety":"🔥","Life Saving Appliances":"🛟","Sling Store":"⚓"};
-  $("#moduleGrid").innerHTML = Object.entries(modules).map(([module, items]) => {
-    const remaining = items.filter((item) => item.status !== "Approved" && item.status !== "N/A").length;
-    return '<button class="module-card" data-module="' + escapeHtml(module) + '"><span class="icon">' + (icons[module] || "▦") + '</span><strong>' + escapeHtml(module) + '</strong><small>' + remaining + ' remaining • ' + completionPercent(items) + '% approved</small></button>';
+  const grouped = groupBy(allItems(), "module");
+  $("#moduleList").innerHTML = Object.entries(grouped).map(([m, arr]) => {
+    const rem = arr.filter(i => i.status !== "Approved" && i.status !== "N/A").length;
+    return `<button class="moduleRow" data-module="${esc(m)}"><div><b>${esc(m)}</b><br><small>${pct(arr)}% complete</small></div><span class="badge">${rem} remaining</span></button>`;
   }).join("");
-
-  $$("#moduleGrid .module-card").forEach((button) => {
-    button.addEventListener("click", () => {
-      const module = button.dataset.module;
-      if (module === "Sling Store") navigate("slingView");
-      else {
-        navigate("itemsView");
-        $("#searchInput").value = module;
-        renderList();
-      }
-    });
-  });
-
-  renderSlingAlerts();
-
-  const areas = groupBy(allItems, "area");
-  $("#areaOverview").innerHTML = Object.entries(areas).map(([area, items]) => {
-    const remaining = items.filter((item) => item.status !== "Approved" && item.status !== "N/A").length;
-    return '<button class="deck-row" data-area="' + escapeHtml(area) + '"><div><strong>' + escapeHtml(area) + '</strong><small>' + completionPercent(items) + '% approved</small></div><span class="badge">' + remaining + ' remaining</span></button>';
-  }).join("");
-
-  $$("#areaOverview .deck-row").forEach((button) => {
-    button.addEventListener("click", () => {
-      navigate("itemsView");
-      $("#searchInput").value = button.dataset.area;
-      renderList();
-    });
-  });
+  $$("#moduleList .moduleRow").forEach(b => b.onclick = () => { go(b.dataset.module === "Sling Store" ? "sling" : "shift"); $("#search").value = b.dataset.module; renderShift(); });
 }
 
-function renderSlingAlerts() {
-  const sling = allItems.filter((item) => item.module === "Sling Store");
-  const out = sling.filter((item) => item.loanStatus === "Out").length;
-  const overdue = sling.filter((item) => item.loanStatus === "Overdue").length;
-  const quarantine = sling.filter((item) => item.loanStatus === "Quarantine").length;
-  const certDue = sling.filter((item) => item.certificateStatus === "Expiring Soon").length;
-  $("#slingAlerts").innerHTML =
-    alertRow("Out on loan", out, "Out") +
-    alertRow("Overdue", overdue, "Overdue") +
-    alertRow("Quarantine", quarantine, "Quarantine") +
-    alertRow("Certificates due soon", certDue, "Follow-up");
+function renderShift(){
+  const q = ($("#search")?.value || "").toLowerCase();
+  const arr = allItems().filter(i => JSON.stringify(i).toLowerCase().includes(q));
+  $("#shiftList").innerHTML = arr.map(card).join("") || empty("No matching items");
+  $$("#shiftList .card").forEach(c => c.onclick = () => openItem(c.dataset.id));
 }
 
-function alertRow(label, count, status) {
-  return '<button class="deck-row" data-sling-shortcut="' + escapeHtml(status) + '"><div><strong>' + escapeHtml(label) + '</strong><small>Sling Store</small></div><span class="status ' + statusClass(status) + '">' + count + '</span></button>';
+function renderSling(){
+  const sling = allItems().filter(i => i.module === "Sling Store");
+  $("#outCount").textContent = sling.filter(i => i.loan === "Out").length;
+  $("#overdueCount").textContent = sling.filter(i => i.loan === "Overdue").length;
+  $("#quarantineCount").textContent = sling.filter(i => i.loan === "Quarantine").length;
+  $("#certCount").textContent = sling.filter(i => (i.cert || "").toLowerCase().includes("expiring")).length;
+  const arr = sling.filter(i => slingFilter === "All" || i.loan === slingFilter);
+  $("#slingList").innerHTML = arr.map(card).join("") || empty("No sling items");
+  $$("#slingList .card").forEach(c => c.onclick = () => openItem(c.dataset.id));
 }
 
-function renderList() {
-  const search = ($("#searchInput") ? $("#searchInput").value : "").toLowerCase();
-  const filtered = allItems.filter((item) => {
-    const matchesFilter = activeFilter === "All" || item.frequency === activeFilter;
-    return matchesFilter && JSON.stringify(item).toLowerCase().includes(search);
-  });
-  $("#taskList").innerHTML = filtered.map(cardHtml).join("") || emptyState("No matching items");
-  $$("#taskList .task-card").forEach((card) => card.addEventListener("click", () => openItem(card.dataset.id)));
+function renderFindings(){
+  const arr = allItems().filter(i => ["Defect","Follow-up"].includes(i.status) || ["Overdue","Quarantine"].includes(i.loan));
+  $("#findingsList").innerHTML = arr.map(card).join("") || empty("No open findings");
+  $$("#findingsList .card").forEach(c => c.onclick = () => openItem(c.dataset.id));
 }
 
-function renderSlingStore() {
-  const sling = allItems.filter((item) => item.module === "Sling Store");
-  $("#loanOut").textContent = sling.filter((i) => i.loanStatus === "Out").length;
-  $("#loanOverdue").textContent = sling.filter((i) => i.loanStatus === "Overdue").length;
-  $("#loanQuarantine").textContent = sling.filter((i) => i.loanStatus === "Quarantine").length;
-  $("#loanCertDue").textContent = sling.filter((i) => i.certificateStatus === "Expiring Soon").length;
-
-  const filtered = sling.filter((item) => activeSlingFilter === "All" || item.loanStatus === activeSlingFilter);
-  $("#loanList").innerHTML = filtered.map(cardHtml).join("") || emptyState("No sling store items");
-  $$("#loanList .task-card").forEach((card) => card.addEventListener("click", () => openItem(card.dataset.id)));
+function renderDash(){
+  const items = allItems();
+  $("#dashPct").textContent = pct() + "%";
+  $("#dashRemaining").textContent = items.filter(i => i.status !== "Approved" && i.status !== "N/A").length;
+  $("#dashDefects").textContent = items.filter(i => i.status === "Defect").length;
+  $("#dashFollow").textContent = items.filter(i => i.status === "Follow-up").length;
+  $("#progressList").innerHTML = Object.entries(groupBy(items, "module")).map(([m, arr]) => progress(m, arr)).join("");
+  const sling = items.filter(i => i.module === "Sling Store");
+  $("#loanStats").innerHTML = progress("Out on loan", sling.filter(i => i.loan === "Out"), "orange") + progress("Overdue", sling.filter(i => i.loan === "Overdue"), "red") + progress("Quarantine", sling.filter(i => i.loan === "Quarantine"), "red") + progress("Certificates due", sling.filter(i => (i.cert || "").toLowerCase().includes("expiring")), "orange");
 }
 
-function cardHtml(item) {
-  const cert = item.certificateStatus ? '<p>Cert: ' + escapeHtml(item.certificateStatus) + (item.nextDue ? ' • Due ' + escapeHtml(item.nextDue) : '') + '</p>' : '';
-  const loan = item.loanStatus ? '<p>Loan: ' + escapeHtml(item.loanStatus) + (item.loanedTo ? ' • ' + escapeHtml(item.loanedTo) : '') + (item.usedAt ? ' • ' + escapeHtml(item.usedAt) : '') + '</p>' : '';
-  const comment = item.comment ? '<p>' + escapeHtml(item.comment) + '</p>' : '';
-  return '<button class="task-card" data-id="' + escapeHtml(item.id) + '"><div><h3>' + escapeHtml(item.title) + '</h3><p>' + escapeHtml(item.module) + ' • ' + escapeHtml(item.location) + '</p><p>' + escapeHtml(item.localTag) + ' • ' + escapeHtml(item.frequency) + '</p>' + cert + loan + comment + '</div><div class="badges"><span class="badge">' + escapeHtml(item.category) + '</span><span class="status ' + statusClass(item.status) + '">' + escapeHtml(item.status) + '</span>' + (item.loanStatus ? '<span class="status ' + statusClass(item.loanStatus) + '">' + escapeHtml(item.loanStatus) + '</span>' : '') + '</div></button>';
+function card(i){
+  const cert = i.cert ? `<p>${esc(i.cert)}</p>` : "";
+  const loan = i.loan ? `<p>Loan: ${esc(i.loan)} ${i.loanedTo ? "• " + esc(i.loanedTo) : ""}</p>` : "";
+  const statusClass = cls(i.status);
+  const loanBadge = i.loan ? `<span class="status ${cls(i.loan)}">${esc(i.loan)}</span>` : "";
+  return `<button class="card" data-id="${esc(i.id)}"><div><h3>${esc(i.title)}</h3><p>${esc(i.module)} • ${esc(i.location)}</p><p>${esc(i.tag)} • ${esc(i.frequency)}</p>${cert}${loan}<p>${esc(i.detail)}</p></div><div class="cardBadges"><span class="badge">${esc(i.type)}</span><span class="status ${statusClass}">${esc(i.status)}</span>${loanBadge}</div></button>`;
 }
 
-function openItem(id) {
+function openItem(id){
+  const i = allItems().find(x => x.id === id);
+  if(!i) return;
   currentId = id;
-  const item = allItems.find((x) => x.id === id);
-  if (!item) return;
-  $("#dialogMeta").textContent = item.module + " • " + item.frequency;
-  $("#dialogTitle").textContent = item.title;
-  $("#dialogLocation").textContent = item.location + " • " + item.deck;
-  $("#dialogLocalTag").textContent = "Local tag: " + item.localTag;
-  $("#dialogAmosId").textContent = "ID: " + item.amosId;
-  $("#dialogCert").textContent = item.certificateStatus ? "Cert: " + item.certificateStatus : "No cert";
-  $("#dialogTask").textContent = item.task;
-  $("#checkpointList").innerHTML = (item.checkpoints || []).map((checkpoint) => "<li>" + escapeHtml(checkpoint) + "</li>").join("");
-  $("#commentInput").value = item.comment || "";
-  $("#severitySelect").value = item.severity || "";
-
-  $("#loanBox").innerHTML = item.loanStatus ? '<strong>Loan details</strong><p>Status: ' + escapeHtml(item.loanStatus) + '</p><p>Type: ' + escapeHtml(item.loanType || "-") + '</p><p>Loaned to: ' + escapeHtml(item.loanedTo || "-") + '</p><p>Used at: ' + escapeHtml(item.usedAt || "-") + '</p><p>Date out: ' + escapeHtml(item.dateOut || "-") + '</p><p>Expected return: ' + escapeHtml(item.expectedReturn || "-") + '</p>' : "";
-
-  $$(".status-select button").forEach((button) => button.classList.toggle("active-status", button.dataset.status === item.status));
-  $("#taskDialog").showModal();
+  $("#dlgMeta").textContent = i.module + " • " + i.frequency;
+  $("#dlgTitle").textContent = i.title;
+  $("#dlgLocation").textContent = i.location;
+  $("#dlgTag").textContent = "Tag: " + i.tag;
+  $("#dlgStatus").textContent = i.status;
+  $("#dlgCert").textContent = i.cert || "No cert";
+  $("#dlgTask").textContent = i.detail;
+  $("#dlgChecks").innerHTML = (i.checks || []).map(c => `<li>${esc(c)}</li>`).join("");
+  $("#statusSelect").value = i.status;
+  $("#comment").value = i.detail || "";
+  $("#loanBox").innerHTML = i.loan ? `<b>Loan details</b><p>Status: ${esc(i.loan)}</p><p>Type: ${esc(i.loanType || "-")}</p><p>Borrowed by: ${esc(i.loanedTo || "-")}</p><p>Used at: ${esc(i.location || "-")}</p><p>Date out: ${esc(i.dateOut || "-")}</p><p>Expected return: ${esc(i.expectedReturn || "-")}</p>` : "";
+  $("#dialog").showModal();
 }
 
-function saveCurrent() {
-  const item = allItems.find((x) => x.id === currentId);
-  const active = $(".status-select button.active-status");
-  if (!item) return;
-  item.status = active ? active.dataset.status : item.status;
-  item.comment = $("#commentInput").value.trim();
-  item.severity = $("#severitySelect").value;
-  item.updatedAt = new Date().toISOString();
-  saveState();
+function saveItem(){
+  const i = allItems().find(x => x.id === currentId);
+  if(!i) return;
+  i.status = $("#statusSelect").value;
+  i.detail = $("#comment").value.trim();
+  save();
   render();
 }
 
-function renderFindings() {
-  const findings = allItems.filter((item) => item.status === "Defect" || item.status === "Follow-up" || item.loanStatus === "Overdue" || item.loanStatus === "Quarantine");
-  $("#findingsList").innerHTML = findings.map(cardHtml).join("") || emptyState("No open findings");
-  $$("#findingsList .task-card").forEach((card) => card.addEventListener("click", () => openItem(card.dataset.id)));
+function progress(label, arr, color){
+  const p = pct(arr);
+  const barClass = color === "red" ? " red" : color === "orange" ? " orange" : "";
+  return `<div class="barRow"><div class="barTop"><span>${esc(label)}</span><span>${arr.length} items • ${p}%</span></div><div class="bar${barClass}"><div style="width:${p}%"></div></div></div>`;
 }
 
-function renderManagement() {
-  const remaining = allItems.filter((item) => item.status !== "Approved" && item.status !== "N/A").length;
-  const defects = allItems.filter((item) => item.status === "Defect").length;
-  const follow = allItems.filter((item) => item.status === "Follow-up").length;
-  $("#managerCompletion").textContent = completionPercent() + "%";
-  $("#managerRemaining").textContent = remaining;
-  $("#managerDefects").textContent = defects;
-  $("#managerFollow").textContent = follow;
-  $("#moduleStats").innerHTML = Object.entries(groupBy(allItems, "module")).map(([module, items]) => progressRow(module, items)).join("");
-
-  const sling = allItems.filter((item) => item.module === "Sling Store");
-  $("#loanStats").innerHTML =
-    progressRow("In Store", sling.filter((i) => i.loanStatus === "In Store")) +
-    progressRow("Out", sling.filter((i) => i.loanStatus === "Out"), "Out") +
-    progressRow("Overdue", sling.filter((i) => i.loanStatus === "Overdue"), "Overdue") +
-    progressRow("Quarantine", sling.filter((i) => i.loanStatus === "Quarantine"), "Quarantine") +
-    progressRow("Cert Expiring Soon", sling.filter((i) => i.certificateStatus === "Expiring Soon"), "Expiring Soon");
+function syncDemo(){
+  $("#syncBtn").textContent = "…";
+  setTimeout(() => { $("#syncBtn").textContent = "✓"; setTimeout(() => $("#syncBtn").textContent = "↻", 900); }, 650);
 }
 
-function progressRow(label, items, styleLabel) {
-  const percent = completionPercent(items);
-  const done = items.filter((item) => item.status === "Approved").length;
-  const barClass = styleLabel === "Overdue" || styleLabel === "Quarantine" ? " red" : (styleLabel === "Out" || styleLabel === "Expiring Soon" ? " orange" : "");
-  return '<div class="stat-row"><div class="stat-top"><span>' + escapeHtml(label) + '</span><span>' + done + '/' + items.length + ' • ' + percent + '%</span></div><div class="bar' + barClass + '"><div style="width:' + percent + '%"></div></div></div>';
-}
-
-function simulateSync() {
-  $("#syncButton").textContent = "…";
-  setTimeout(() => { $("#syncButton").textContent = "✓"; setTimeout(() => { $("#syncButton").textContent = "↻"; }, 900); }, 700);
-}
-
-function resetDemo() { localStorage.removeItem(STORAGE_KEY); window.location.reload(); }
-
-function groupBy(items, key) {
-  return items.reduce((groups, item) => {
-    const value = item[key] || "Unknown";
-    if (!groups[value]) groups[value] = [];
-    groups[value].push(item);
-    return groups;
+function groupBy(arr, key){
+  return arr.reduce((g, x) => {
+    const v = x[key] || "Unknown";
+    if(!g[v]) g[v] = [];
+    g[v].push(x);
+    return g;
   }, {});
 }
 
-function emptyState(text) { return '<div class="panel"><h3>' + escapeHtml(text) + '</h3><p class="muted">Try another filter or search term.</p></div>'; }
-
-function statusClass(status) {
-  if (status === "N/A") return "NA";
-  if (status === "In Store") return "InStore";
-  return status.replaceAll(" ", "");
+function cls(s){ return String(s || "").replaceAll(" ", "").replace("/", ""); }
+function empty(t){ return `<div class="panel"><h3>${esc(t)}</h3><p class="muted">Try another search or filter.</p></div>`; }
+function esc(v){
+  return String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
 }
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (char) => {
-    const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
-    return map[char];
-  });
-}
-
 init();

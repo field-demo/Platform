@@ -1,12 +1,11 @@
-# Field Demo Platform v1.1
+# Field Demo Clean v1.2
 
-Added:
-- Sling Store loan register
-- Short term and long term loans
-- Overdue items
-- Quarantine
-- Certificate expiring soon
-- Maintenance Program module
-- Additional chain hoist examples
+Simplified presentation demo for Scarabeo 8.
 
-No signature function is included.
+Focus:
+- My Shift
+- Sling Store
+- Findings
+- Dashboard
+- Fewer menus
+- Cleaner before shift change
