@@ -1,10 +1,10 @@
-# Field Demo Platform v0.2
+# Field Demo Platform v0.3
 
-Demo now includes pre-filled example statuses:
-- Approved
-- Defect
-- Follow-up
-- N/A
-- Not Started
+Modules included:
+- Daily Deck Rounds
+- Fire & Safety
+- Life Saving Appliances
+- Sling Store / Lifting Gear
+- Management Dashboard
 
 No signature function is included.
